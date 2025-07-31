@@ -1,29 +1,64 @@
 # SPass Manager
-A program to decrypt .spass files, and maybe encrypt to .spass in the future.
+A program (and library) to decrypt .spass files.
 
 ## Installation
-`go install github.com/0xdeb7ef/spass-manager/cmd/spass@latest`
+`go install github.com/0xdeb7ef/spass-manager@latest`
 
 ## Building from Source
 1. `git clone https://github.com/0xdeb7ef/spass-manager.git`
 2. `cd spass-manager`
-3. `go build ./cmd/spass`
+3. `go build .`
 
-Congratulations, you are now the owner of a brand new `spass` binary!
+Congratulations, you are now the owner of a brand new `spass-manager` binary!
 
 ## Usage
-You can simply call `spass` and it will print the usage.
+You can simply call `spass-manager` and it will print the usage.
 
 ```console
-$ spass decrypt -file super_secret_password_file.spass -password 'SuperSecretPassword' -format chrome > passwords.csv
+$ spass-manager decrypt -i super_secret_password_file.spass -o passwords.csv -p SuperSecretPassword1! -f chrome
 ```
 
 The above example decrypts and writes your exported passwords into passwords.csv that Chrome can happily read.
+Make sure to escape certain special characters you may have in your password.
+
+## Formats
+
+- `chrome`: The format that is chosen by default when you don't pass the format flag. Contains `name, url, username, password, notes`
+- `csv`: Generic csv format, outputs `url, username, password, otp, notes`
+- `raw`: Special format that simply decrypts the .spass file and dumps the contents as-is.
+
+## Library Usage
+
+There's not a lot going on with this library, it provides a `SPASS` struct with a single `Deserialize` method.
+It also provides a `Decrypt` function.
+
+`go get -u github.com/0xdeb7ef/spass-manager/pkg/spass`
+
+
+```go
+import "github.com/0xdeb7ef/spass-manager/pkg/spass"
+
+...
+
+data, err := spass.Decrypt(file_bytes)
+if err != nil {
+	// handle error
+}
+
+var spass spass.SPASS
+err = spass.Deserialize(data)
+if err != nil {
+	// handle error
+}
+
+...
+
+```
+
+(see cmd/decrypt.go for a better example)
 
 ## Why?
 I was looking for a way to move my passwords to and from Samsung Pass, but could not find anything online. Everywhere I looked, it said that Samsung uses a custom format.
-
-What we end up with is a hastily written program that can only decrypt .spass files for now.
 
 ## How?
 Simple, really. Just had a look at what the app does internally. Turns out, it was just AES, it's always AES.
@@ -37,4 +72,4 @@ The second line lists which types of data you have exported (passwords, cards, a
 
 The third line should say `next_table` and this specific keyword is used to delimit the different data types (passwords, cards, addresses, notes).
 
-The lines following `next_table` is the actual data. The data itself is also base64 encoded, `spass` makes no effort to actually sanitize this output (PRs are welcome, obviously).
+The lines following `next_table` are the actual data. The headers are in plain text, but the data itself is base64 encoded.
