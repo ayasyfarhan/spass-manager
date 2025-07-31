@@ -10,8 +10,10 @@ import (
 	"strings"
 )
 
-// Given bytes that represent the decrypted spass file,
-// populates an SPASS object with the appropriate data
+// Given bytes that represent the decrypted SPASS file,
+// parses the data and populates the SPASS object with the
+// corresponding entries for passwords, cards, addresses, and notes,
+// based on the module flags present in the file.
 func (spass *SPASS) Deserialize(data []byte) error {
 	line := 0
 	scanner := bufio.NewScanner(bytes.NewReader(data))
@@ -60,8 +62,8 @@ func (spass *SPASS) Deserialize(data []byte) error {
 		}
 
 		for _, p := range passwords_data {
-			pass, err := parsePassword(p)
-			if err != nil {
+			var pass Password
+			if err := parseGeneric(p, &pass); err != nil {
 				return err
 			}
 
@@ -77,8 +79,8 @@ func (spass *SPASS) Deserialize(data []byte) error {
 		}
 
 		for _, c := range cards_data {
-			card, err := parseCard(c)
-			if err != nil {
+			var card Card
+			if err := parseGeneric(c, &card); err != nil {
 				return err
 			}
 
@@ -88,14 +90,14 @@ func (spass *SPASS) Deserialize(data []byte) error {
 
 	// Addresses
 	if modules[2] {
-		adresses_data, err := parseData(s[3])
+		addresses_data, err := parseData(s[3])
 		if err != nil {
 			return err
 		}
 
-		for _, a := range adresses_data {
-			address, err := parseAddress(a)
-			if err != nil {
+		for _, a := range addresses_data {
+			var address Address
+			if err := parseGeneric(a, &address); err != nil {
 				return err
 			}
 
@@ -111,8 +113,8 @@ func (spass *SPASS) Deserialize(data []byte) error {
 		}
 
 		for _, n := range notes_data {
-			note, err := parseNote(n)
-			if err != nil {
+			var note Note
+			if err := parseGeneric(n, &note); err != nil {
 				return err
 			}
 
