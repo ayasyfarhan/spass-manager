@@ -32,7 +32,7 @@ Make sure to escape certain special characters you may have in your password.
 There's not a lot going on with this library, it provides a `SPASS` struct with a single `Deserialize` method.
 It also provides a `Decrypt` function.
 
-`go get -u github.com/0xdeb7ef/spass-manager/pkg/spass`
+`go get -u github.com/0xdeb7ef/spass-manager/pkg/spass@latest`
 
 
 ```go
@@ -55,7 +55,7 @@ if err != nil {
 
 ```
 
-(see cmd/decrypt.go for a better example)
+(see [cmd/decrypt.go](https://github.com/0xdeb7ef/spass-manager/blob/master/cmd/decrypt.go) for a better example)
 
 ## Why?
 I was looking for a way to move my passwords to and from Samsung Pass, but could not find anything online. Everywhere I looked, it said that Samsung uses a custom format.
