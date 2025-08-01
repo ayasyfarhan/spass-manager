@@ -103,33 +103,33 @@ func parseGeneric(data []string, v any) error {
 		return errors.New("v must point to a struct")
 	}
 
-	numFields := rv.NumField()
-	if numFields != len(data) {
-		return fmt.Errorf("data length %d doesn't match struct fields %d", len(data), numFields)
+	num_fields := rv.NumField()
+	if num_fields != len(data) {
+		return fmt.Errorf("data length %d doesn't match struct fields %d", len(data), num_fields)
 	}
 
-	for i := range numFields {
+	for i := range num_fields {
 		field := rv.Field(i)
-		fieldType := field.Type()
-		dataVal := data[i]
+		field_type := field.Type()
+		data_val := data[i]
 
-		switch fieldType.Kind() {
+		switch field_type.Kind() {
 		case reflect.String:
-			field.SetString(dataVal)
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			num, err := strconv.ParseUint(dataVal, 10, 64)
+			field.SetString(data_val)
+		case reflect.Uint:
+			num, err := strconv.ParseUint(data_val, 10, 0)
 			if err != nil {
 				return err
 			}
 			field.SetUint(num)
 		case reflect.Slice:
 			if field.Type() == reflect.TypeOf([]byte{}) {
-				field.SetBytes([]byte(dataVal))
+				field.SetBytes([]byte(data_val))
 			} else {
 				return fmt.Errorf("unsupported slice type: %v", field.Type())
 			}
 		default:
-			return fmt.Errorf("unsupported field type: %v", fieldType)
+			return fmt.Errorf("unsupported field type: %v", field_type)
 		}
 	}
 	return nil
