@@ -87,12 +87,6 @@ func formatRaw(input, output, password string) error {
 		return err
 	}
 
-	var spass spass.SPASS
-	err = spass.Deserialize(data)
-	if err != nil {
-		return err
-	}
-
 	err = os.WriteFile(output, data, 0600)
 	if err != nil {
 		return err

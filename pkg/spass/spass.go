@@ -43,7 +43,7 @@ func (spass *SPASS) Deserialize(data []byte) error {
 			}
 		}
 
-		if line == 3 {
+		if line == 4 {
 			if scanner.Text() == "next_table" {
 				break
 			} else {
