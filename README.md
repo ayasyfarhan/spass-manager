@@ -70,6 +70,8 @@ The first line appears to indicate the file format version.
 
 The second line lists which types of data you have exported (passwords, cards, addresses, notes), as booleans.
 
-The third line should say `next_table` and this specific keyword is used to delimit the different data types (passwords, cards, addresses, notes).
+The third line, I have no idea, this is a new addition (since version 25 of the format, from what I can tell), it just says `false` for now.
+
+The fourth line should say `next_table` and this specific keyword is used to delimit the different data types (passwords, cards, addresses, notes).
 
 The lines following `next_table` are the actual data. The headers are in plain text, but the data itself is base64 encoded.
