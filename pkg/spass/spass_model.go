@@ -111,6 +111,7 @@ func parseGeneric(data []string, v any) error {
 	for i := range num_fields {
 		field := rv.Field(i)
 		field_type := field.Type()
+		field_name := rv.Type().Field(i).Name
 		data_val := data[i]
 
 		switch field_type.Kind() {
@@ -119,17 +120,17 @@ func parseGeneric(data []string, v any) error {
 		case reflect.Uint:
 			num, err := strconv.ParseUint(data_val, 10, 0)
 			if err != nil {
-				return err
+				return fmt.Errorf("unable to parse uint in field: %v", field_name)
 			}
 			field.SetUint(num)
 		case reflect.Slice:
 			if field.Type() == reflect.TypeOf([]byte{}) {
 				field.SetBytes([]byte(data_val))
 			} else {
-				return fmt.Errorf("unsupported slice type: %v", field.Type())
+				return fmt.Errorf("unsupported slice type: %v in field: %v", field.Type(), field_name)
 			}
 		default:
-			return fmt.Errorf("unsupported field type: %v", field_type)
+			return fmt.Errorf("unsupported field type: %v in field: %v", field_type, field_name)
 		}
 	}
 	return nil
